@@ -292,7 +292,7 @@ function render() {
         <div class="stat-num"><div class="stat-val" style="color:#888">${total}</div><div class="stat-lbl">Total</div></div>
         <div class="stat-num"><div class="stat-val" style="color:#4CAF50">${tenho}</div><div class="stat-lbl">Tenho</div></div>
         <div class="stat-num"><div class="stat-val" style="color:#e57373">${total-tenho}</div><div class="stat-lbl">Preciso</div></div>
-        <div class="stat-num"><div class="stat-val" style="color:#ffd700">${troca}</div><div class="stat-lbl">Troca</div></div>
+        <div class="stat-num"><div class="stat-val" style="color:#ffd700">${state.tradeMode ? state.selectedTrade.size : troca}</div><div class="stat-lbl">Troca</div></div>
       </div>
     </div>
 
