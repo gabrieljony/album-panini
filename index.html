@@ -25,6 +25,8 @@ button{font-family:inherit}
 .card:active{transform:scale(0.96)}
 .card.tenho{background:#0a2e0a;border-color:#2d7a2d}
 .light .card.tenho{background:#e8f5e9;border-color:#2e7d32}
+.card.troca{background:#0a2e0a;border-color:#2d7a2d}
+.light .card.troca{background:#e8f5e9;border-color:#2e7d32}
 .card.foil{border-color:#b8860b}
 .card.tenho.foil{border-color:#4caf50}
 .card-img{width:80px;height:80px;border-radius:6px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);flex-shrink:0}
@@ -70,6 +72,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .nav-btn.active .nav-label{color:var(--gold);font-weight:700}
 .nav-count{font-size:10px;color:var(--text4)}
 .nav-btn.active .nav-count{color:var(--gold)}
+.nav-btn.active[data-key="troca"] .nav-icon{color:var(--green)}
 #app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
 .loader{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 .theme-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:4px;margin-left:8px;line-height:1}
@@ -205,7 +208,7 @@ function render() {
 
   const cardsHtml = filtered.map(s => {
     const st = state.album[s.id] || {tenho:false,troca:false};
-    const cls = ["card", st.tenho?"tenho":"", s.foil?"foil":""].filter(Boolean).join(" ");
+    const cls = ["card", st.tenho?"tenho":"", st.troca?"troca":"", s.foil?"foil":""].filter(Boolean).join(" ");
     const flag = FLAG_MAP[s.sc] || "⚽";
     const isSelected = state.selectedTrade.has(s.id);
     
@@ -308,7 +311,7 @@ function render() {
         {key:"ranking",icon:"🏆",label:"Ranking",count:""},
         {key:"num1",icon:"①",label:"Nº 1",count:""},
         {key:"num13",icon:"⑬",label:"Nº 13",count:""},
-      ].map(t=>`<button class="nav-btn${state.tab===t.key?" active":""}" onclick="setTab('${t.key}')">
+      ].map(t=>`<button class="nav-btn${state.tab===t.key?" active":""}" data-key="${t.key}" onclick="setTab('${t.key}')">
         <span class="nav-icon">${t.icon}</span>
         <span class="nav-label">${t.label}</span>
         <span class="nav-count">${t.count}</span>
