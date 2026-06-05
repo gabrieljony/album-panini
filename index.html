@@ -17,15 +17,22 @@ input::placeholder{color:var(--text4)}
 button{font-family:inherit}
 ::-webkit-scrollbar{display:none}
 .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+@media(max-width:600px){.grid{grid-template-columns:repeat(4,1fr);gap:4px}}
+@media(max-width:360px){.grid{grid-template-columns:repeat(3,1fr);gap:3px}}
 .card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:transform 0.1s,border-color 0.15s;min-height:118px;position:relative;user-select:none}
+@media(max-width:600px){.card{padding:6px 3px;min-height:100px;gap:3px}}
+@media(max-width:360px){.card{padding:5px 2px;min-height:90px;gap:2px}}
 .card:active{transform:scale(0.96)}
 .card.tenho{background:#0a2e0a;border-color:#2d7a2d}
 .light .card.tenho{background:#e8f5e9;border-color:#2e7d32}
 .card.foil{border-color:#b8860b}
 .card.tenho.foil{border-color:#4caf50}
 .card-img{width:80px;height:80px;border-radius:6px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);flex-shrink:0}
+@media(max-width:600px){.card-img{width:70px;height:70px}}
+@media(max-width:360px){.card-img{width:60px;height:60px}}
 .card-img img{width:100%;height:100%;object-fit:cover}
 .card-code{font-size:9px;color:var(--text3);font-family:monospace;letter-spacing:1px}
+@media(max-width:600px){.card-code{font-size:8px}}
 .card-name{font-size:10px;color:var(--text2);text-align:center;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:100%}
 .card.tenho .card-name{color:#90ee90}
 .card-check{margin-top:auto;font-size:15px;color:var(--border)}
@@ -49,7 +56,7 @@ button{font-family:inherit}
 .stat-num{text-align:center}
 .stat-val{font-size:15px;font-weight:700}
 .stat-lbl{font-size:9px;color:var(--text3);margin-top:1px}
-.content{flex:1;padding:10px 10px 72px;overflow-y:auto}
+.content{flex:1;padding:8px 8px 72px;overflow-y:auto}
 .result-count{font-size:11px;color:var(--text3);margin-bottom:8px}
 .empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:14px}
 .empty-icon{font-size:36px;margin-bottom:12px}
