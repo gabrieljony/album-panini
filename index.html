@@ -308,7 +308,7 @@ function render() {
         {key:"todos",icon:"⚽",label:"Todos",count:total},
         {key:"tenho",icon:"✓",label:"Tenho",count:tenho},
         {key:"preciso",icon:"○",label:"Preciso",count:total-tenho},
-        {key:"troca",icon:"↔",label:"Troca",count:troca},
+        {key:"troca",icon:"↔",label:"Troca",count:state.tradeMode?state.selectedTrade.size:troca},
         {key:"ranking",icon:"🏆",label:"Ranking",count:""},
         {key:"num1",icon:"①",label:"Nº 1",count:""},
         {key:"num13",icon:"⑬",label:"Nº 13",count:""},
