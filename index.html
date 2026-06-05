@@ -21,7 +21,7 @@ button{font-family:inherit}
 .card.tenho{background:#0a2e0a;border-color:#2d7a2d}
 .card.foil{border-color:#b8860b}
 .card.tenho.foil{border-color:#4caf50}
-.card-img{width:50px;height:50px;border-radius:6px;overflow:hidden;background:#0d0d1a;border:1px solid #2a2a3e;flex-shrink:0}
+.card-img{width:80px;height:80px;border-radius:6px;overflow:hidden;background:#0d0d1a;border:1px solid #2a2a3e;flex-shrink:0}
 .card-img img{width:100%;height:100%;object-fit:cover}
 .card-code{font-size:9px;color:#666;font-family:monospace;letter-spacing:1px}
 .card-name{font-size:10px;color:#ccc;text-align:center;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:100%}
@@ -77,6 +77,16 @@ const FLAG_MAP = {
   FWC:"🏆",PANINI:"🇧🇷"
 };
 
+const COUNTRY_NAME = {
+  MEX:"México",RSA:"África do Sul",KOR:"Coréia do Sul",CZE:"República Tcheca",CAN:"Canadá",BIH:"Bósnia e Herzegovina",QAT:"Catar",SUI:"Suíça",
+  BRA:"Brasil",MAR:"Marrocos",HAI:"Haiti",SCO:"Escócia",USA:"Estados Unidos",PAR:"Paraguai",AUS:"Austrália",TUR:"Turquia",
+  GER:"Alemanha",CUW:"Curaçao",CIV:"Costa do Marfim",ECU:"Equador",NED:"Holanda",JPN:"Japão",SWE:"Suécia",TUN:"Tunísia",
+  BEL:"Bélgica",EGY:"Egito",IRN:"Irã",NZL:"Nova Zelândia",ESP:"Espanha",CPV:"Cabo Verde",KSA:"Arábia Saudita",URU:"Uruguai",
+  FRA:"França",SEN:"Senegal",IRQ:"Iraque",NOR:"Noruega",ARG:"Argentina",ALG:"Argélia",COL:"Colômbia",UZB:"Uzbequistão",
+  ENG:"Inglaterra",POR:"Portugal",GHA:"Gana",JOR:"Jordânia",CRO:"Croácia",AUT:"Áustria",COD:"Congo",PAN:"Panamá",
+  FWC:"Copa do Mundo",PANINI:"Panini"
+};
+
 const GROUPS = ["Especial","Grupo A","Grupo B","Grupo C","Grupo D","Grupo E",
   "Grupo F","Grupo G","Grupo H","Grupo I","Grupo J","Grupo K","Grupo L"];
 
@@ -118,13 +128,21 @@ let state = {
   tab: "todos",
   search: "",
   group: "Todos",
+  tradeMode: false,
+  selectedTrade: new Set(),
 };
 
 function getFiltered() {
   let list = ALBUM_DATA;
   if (state.tab === "tenho") list = list.filter(s => state.album[s.id]?.tenho);
   if (state.tab === "preciso") list = list.filter(s => !state.album[s.id]?.tenho);
-  if (state.tab === "troca") list = list.filter(s => state.album[s.id]?.troca);
+  if (state.tab === "troca") {
+    if (state.tradeMode) {
+      list = list.filter(s => !state.album[s.id]?.tenho);
+    } else {
+      list = list.filter(s => state.album[s.id]?.troca);
+    }
+  }
   if (state.group !== "Todos") list = list.filter(s => s.group === state.group);
   const q = state.search.trim().toLowerCase();
   if (q) list = list.filter(s =>
@@ -156,15 +174,35 @@ function render() {
     const st = state.album[s.id] || {tenho:false,troca:false};
     const cls = ["card", st.tenho?"tenho":"", s.foil?"foil":""].filter(Boolean).join(" ");
     const flag = FLAG_MAP[s.sc] || "⚽";
+    const isSelected = state.selectedTrade.has(s.id);
+    
+    if (state.tab === "troca" && state.tradeMode) {
+      return `<div class="${cls}${isSelected ? " foil" : ""}" onclick="toggleTradeSelection('${s.id}')" style="cursor:pointer;opacity:${isSelected ? 1 : 0.7}">
+        ${s.foil ? `<div class="foil-badge">FOIL</div>` : ""}
+        <div class="card-img">
+          <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:5px;flex-direction:column;background:linear-gradient(135deg,#1a3a52,#0d1f2d);border-radius:6px;padding:6px">
+            <div style="font-size:12px;color:#88ccff;font-weight:700;letter-spacing:0.5px;text-align:center;line-height:1.3">${COUNTRY_NAME[s.sc] || s.sc}</div>
+            <div style="font-size:11px;color:#ffd700;font-weight:700;letter-spacing:0.5px;text-align:center;line-height:1">${s.code}</div>
+          </div>
+        </div>
+        <div class="card-code" style="display:none"></div>
+        <div class="card-name" style="font-size:11px">${s.name}</div>
+        <div class="card-check">${isSelected ? "✓" : "○"}</div>
+      </div>`;
+    }
+    
     return `<div class="${cls}" onclick="toggleSticker('${s.id}')">
       ${s.foil ? `<div class="foil-badge">FOIL</div>` : ""}
       <div class="card-img">
-        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:20px">${flag}</div>
+        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:5px;flex-direction:column;background:linear-gradient(135deg,#1a3a52,#0d1f2d);border-radius:6px;padding:6px">
+          <div style="font-size:12px;color:#88ccff;font-weight:700;letter-spacing:0.5px;text-align:center;line-height:1.3">${COUNTRY_NAME[s.sc] || s.sc}</div>
+          <div style="font-size:11px;color:#ffd700;font-weight:700;letter-spacing:0.5px;text-align:center;line-height:1">${s.code}</div>
+        </div>
       </div>
-      <div class="card-code">${s.code}</div>
-      <div class="card-name">${s.name}</div>
+      <div class="card-code" style="display:none"></div>
+      <div class="card-name" style="font-size:11px">${s.name}</div>
       <div class="card-check">${st.tenho ? "✓" : "○"}</div>
-      ${state.tab==="tenho" && st.tenho ? `<div class="troca-btn${st.troca?" active":""}" onclick="event.stopPropagation();toggleTroca('${s.id}')">${st.troca?"troca ✓":"troca"}</div>` : ""}
+      ${state.tab==="tenho" && st.tenho && !state.tradeMode ? `<div class="troca-btn${st.troca?" active":""}" onclick="event.stopPropagation();toggleTroca('${s.id}')">${st.troca?"troca ✓":"oferecer"}</div>` : ""}
     </div>`;
   }).join("");
 
@@ -189,7 +227,17 @@ function render() {
     </div>
 
     <div class="stats">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+      ${state.tab === "troca" && state.tradeMode ? `
+        <div style="background:#1a3a2e;border:1px solid #2d7a2d;border-radius:8px;padding:10px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div style="font-size:12px;color:#4CAF50;font-weight:700">Selecionadas: ${state.selectedTrade.size}</div>
+            <div style="display:flex;gap:6px">
+              <button onclick="clearTradeSelection()" style="background:#333;border:1px solid #555;color:#999;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px">Limpar</button>
+              <button onclick="confirmTrade()" style="background:#4CAF50;border:none;color:#000;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:11px">Confirmar Troca</button>
+            </div>
+          </div>
+        </div>
+      ` : ""}
         <span style="font-size:10px;color:#666;letter-spacing:1px">PROGRESSO DA COLEÇÃO</span>
         <span style="font-size:11px;color:#ffd700;font-weight:700">${pct}%</span>
       </div>
@@ -245,7 +293,48 @@ function toggleTroca(id) {
   saveItem(id, next.tenho, next.troca);
   render();
 }
-function setTab(tab) { state.tab = tab; render(); }
+function toggleTradeSelection(id) {
+  if (state.selectedTrade.has(id)) {
+    state.selectedTrade.delete(id);
+  } else {
+    state.selectedTrade.add(id);
+  }
+  render();
+}
+function clearTradeSelection() {
+  state.selectedTrade.clear();
+  render();
+}
+function confirmTrade() {
+  if (state.selectedTrade.size === 0) {
+    alert("Selecione pelo menos uma figurinha!");
+    return;
+  }
+  state.selectedTrade.forEach(id => {
+    const cur = state.album[id] || {id,tenho:false,troca:false};
+    const next = {...cur, tenho:true, troca:false};
+    state.album[id] = next;
+    saveItem(id, next.tenho, next.troca);
+  });
+  state.selectedTrade.clear();
+  state.tradeMode = false;
+  render();
+}
+function startTradeMode() {
+  state.tradeMode = true;
+  state.selectedTrade.clear();
+  render();
+}
+function setTab(tab) { 
+  state.tab = tab;
+  if (tab === "troca") {
+    startTradeMode();
+  } else {
+    state.tradeMode = false;
+    state.selectedTrade.clear();
+  }
+  render();
+}
 function setSearch(v) { state.search = v; render(); }
 function setGroup(g) { state.group = g; render(); }
 
