@@ -10,55 +10,75 @@
 <title>Panini FIFA World Cup 2026™</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:#080818;color:#eee;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;overscroll-behavior:none}
-:root{--gold:#ffd700;--green:#4CAF50;--dark:#080818;--card-bg:#1a1a2e;--border:#2a2a3e}
-input::placeholder{color:#555}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;overscroll-behavior:none;transition:background .25s,color .25s}
+:root{--bg:#080818;--bg2:#0d0d1a;--bg3:#1a1a2e;--bg4:#04040f;--border:#2a2a3e;--border2:#1e1e3a;--text:#eee;--text2:#ccc;--text3:#888;--text4:#555;--gold:#ffd700;--green:#4CAF50;--red:#e57373;--blue:#88ccff}
+.light{--bg:#f0f2f5;--bg2:#ffffff;--bg3:#eaecf4;--bg4:#ffffff;--border:#cfd4e0;--border2:#b8c0d0;--text:#111;--text2:#333;--text3:#666;--text4:#999;--gold:#b8860b;--green:#2e7d32;--red:#c62828;--blue:#1565c0}
+input::placeholder{color:var(--text4)}
 button{font-family:inherit}
 ::-webkit-scrollbar{display:none}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.card{background:#1a1a2e;border:1px solid #2a2a3e;border-radius:10px;padding:8px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:transform 0.1s,border-color 0.15s;min-height:118px;position:relative;user-select:none}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:transform 0.1s,border-color 0.15s;min-height:118px;position:relative;user-select:none}
 .card:active{transform:scale(0.96)}
 .card.tenho{background:#0a2e0a;border-color:#2d7a2d}
+.light .card.tenho{background:#e8f5e9;border-color:#2e7d32}
 .card.foil{border-color:#b8860b}
 .card.tenho.foil{border-color:#4caf50}
-.card-img{width:80px;height:80px;border-radius:6px;overflow:hidden;background:#0d0d1a;border:1px solid #2a2a3e;flex-shrink:0}
+.card-img{width:80px;height:80px;border-radius:6px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);flex-shrink:0}
 .card-img img{width:100%;height:100%;object-fit:cover}
-.card-code{font-size:9px;color:#666;font-family:monospace;letter-spacing:1px}
-.card-name{font-size:10px;color:#ccc;text-align:center;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:100%}
+.card-code{font-size:9px;color:var(--text3);font-family:monospace;letter-spacing:1px}
+.card-name{font-size:10px;color:var(--text2);text-align:center;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:100%}
 .card.tenho .card-name{color:#90ee90}
-.card-check{margin-top:auto;font-size:15px;color:#444}
+.card-check{margin-top:auto;font-size:15px;color:var(--border)}
 .card.tenho .card-check{color:#4CAF50}
-.foil-badge{position:absolute;top:3px;right:4px;font-size:8px;color:#ffd700;font-weight:700;letter-spacing:1px}
+.foil-badge{position:absolute;top:3px;right:4px;font-size:8px;color:var(--gold);font-weight:700;letter-spacing:1px}
 .troca-btn{position:absolute;bottom:3px;left:3px;font-size:8px;color:#555;border:1px solid #333;border-radius:3px;padding:1px 3px;background:transparent}
 .troca-btn.active{color:#ffd700;border-color:#ffd700;background:#2a2200}
-.header{background:#04040f;border-bottom:1px solid #1e1e3a;position:sticky;top:0;z-index:100;padding:10px 14px 0}
+.header{background:var(--bg4);border-bottom:1px solid var(--border2);position:sticky;top:0;z-index:100;padding:10px 14px 0;transition:background .25s}
 .header-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.search-bar{background:#1a1a2e;border-radius:8px;display:flex;align-items:center;gap:8px;padding:6px 10px;margin-bottom:8px;border:1px solid #2a2a3e}
-.search-bar input{background:transparent;border:none;outline:none;color:#eee;font-size:13px;flex:1;min-width:0}
+.search-row{display:flex;gap:6px;margin-bottom:8px}
+.search-bar{background:var(--bg3);border-radius:8px;display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--border);flex:1;transition:background .25s}
+.search-bar input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1;min-width:0}
+.btn-search{background:var(--gold);color:#000;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
 .chips{display:flex;gap:5px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
-.chip{flex-shrink:0;background:#1a1a2e;color:#888;border:1px solid #2a2a3e;border-radius:20px;padding:3px 10px;font-size:10px;cursor:pointer;white-space:nowrap}
-.chip.active{background:#ffd700;color:#000;border-color:#ffd700;font-weight:700}
-.stats{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 16px}
-.progress-bar{background:#1a1a2e;border-radius:4px;height:5px;overflow:hidden;margin:6px 0 8px}
+.chip{flex-shrink:0;background:var(--bg3);color:var(--text3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:10px;cursor:pointer;white-space:nowrap;transition:background .2s}
+.chip.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:700}
+.stats{background:var(--bg2);border-bottom:1px solid var(--border2);padding:10px 16px;transition:background .25s}
+.progress-bar{background:var(--bg3);border-radius:4px;height:5px;overflow:hidden;margin:6px 0 8px}
 .progress-fill{height:100%;background:linear-gradient(90deg,#1a6b1a,#4CAF50);transition:width 0.4s}
 .stat-nums{display:flex;gap:16px}
 .stat-num{text-align:center}
 .stat-val{font-size:15px;font-weight:700}
-.stat-lbl{font-size:9px;color:#666;margin-top:1px}
+.stat-lbl{font-size:9px;color:var(--text3);margin-top:1px}
 .content{flex:1;padding:10px 10px 72px;overflow-y:auto}
-.result-count{font-size:11px;color:#555;margin-bottom:8px}
-.empty{text-align:center;padding:40px 20px;color:#555;font-size:14px}
+.result-count{font-size:11px;color:var(--text3);margin-bottom:8px}
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:14px}
 .empty-icon{font-size:36px;margin-bottom:12px}
-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#04040f;border-top:1px solid #1e1e3a;display:flex;z-index:200}
-.nav-btn{flex:1;background:none;border:none;border-top:2px solid transparent;padding:8px 4px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
-.nav-btn.active{border-top-color:#ffd700}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg4);border-top:1px solid var(--border2);display:flex;z-index:200;overflow-x:auto;-webkit-overflow-scrolling:touch;transition:background .25s}
+.nav-btn{flex-shrink:0;flex:1;min-width:52px;background:none;border:none;border-top:2px solid transparent;padding:8px 4px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav-btn.active{border-top-color:var(--gold)}
 .nav-icon{font-size:16px}
-.nav-label{font-size:9px;color:#666}
-.nav-btn.active .nav-label{color:#ffd700;font-weight:700}
-.nav-count{font-size:10px;color:#555}
-.nav-btn.active .nav-count{color:#ffd700}
-#app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.nav-label{font-size:9px;color:var(--text3)}
+.nav-btn.active .nav-label{color:var(--gold);font-weight:700}
+.nav-count{font-size:10px;color:var(--text4)}
+.nav-btn.active .nav-count{color:var(--gold)}
+#app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
 .loader{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.theme-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:4px;margin-left:8px;line-height:1}
+.ranking-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;transition:background .25s}
+.ranking-bar{background:var(--bg3);border-radius:4px;height:5px;overflow:hidden;margin-top:6px}
+.ranking-fill{height:100%;background:linear-gradient(90deg,#1a6b1a,#4CAF50);transition:width .4s}
+.ranking-fill.complete{background:var(--green)}
+.rank-badge{font-size:15px;min-width:28px;text-align:center}
+.theme-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:4px;margin-left:4px;line-height:1}
+.ranking-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;transition:background .25s}
+.ranking-bar{background:var(--bg3);border-radius:4px;height:5px;overflow:hidden;margin-top:6px}
+.ranking-fill{height:100%;background:linear-gradient(90deg,#1a6b1a,#4CAF50);transition:width .4s}
+.ranking-fill.complete{background:var(--green)}
+.rank-badge{font-size:14px;min-width:26px;text-align:center;flex-shrink:0}
+
+.light .card{border-color:var(--border)}
+.light .foil-badge{color:var(--gold)}
+.light .troca-btn.active{background:#fff8e1}
 </style>
 </head>
 <body>
@@ -127,6 +147,7 @@ let state = {
   album: {},
   tab: "todos",
   search: "",
+  pendingSearch: "",
   group: "Todos",
   tradeMode: false,
   selectedTrade: new Set(),
@@ -143,6 +164,9 @@ function getFiltered() {
       list = list.filter(s => state.album[s.id]?.troca);
     }
   }
+  if (state.tab === "num1") list = list.filter(s => s.num === 1);
+  if (state.tab === "num13") list = list.filter(s => s.num === 13);
+  if (state.tab === "ranking") return [];
   if (state.group !== "Todos") list = list.filter(s => s.group === state.group);
   const q = state.search.trim().toLowerCase();
   if (q) list = list.filter(s =>
@@ -214,14 +238,20 @@ function render() {
           <div style="font-size:12px;font-weight:700;color:#ffd700;letter-spacing:2px">PANINI</div>
           <div style="font-size:10px;color:#666">FIFA World Cup 2026™</div>
         </div>
-        <div style="margin-left:auto;font-size:11px;color:#4CAF50;font-weight:600">${tenho}/980</div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+          <span style="font-size:11px;color:#4CAF50;font-weight:600">${tenho}/980</span>
+          <button class="theme-btn" onclick="toggleTheme()" title="Alternar tema">${document.documentElement.classList.contains('light')?'☀️':'🌙'}</button>
+        </div>
       </div>
-      <div class="search-bar">
-        <span style="font-size:14px;color:#666">🔍</span>
-        <input id="search-input" value="${state.search.replace(/"/g,'&quot;')}"
-          placeholder="Buscar jogador, seleção, código..."
-          oninput="setSearch(this.value)">
-        ${state.search ? `<button onclick="setSearch('')" style="background:none;border:none;color:#666;cursor:pointer;font-size:18px;padding:0">×</button>` : ""}
+      <div class="search-row">
+        <div class="search-bar">
+          <input id="search-input" value="${state.pendingSearch.replace(/"/g,'&quot;')}"
+            placeholder="Buscar jogador, seleção, código..."
+            oninput="state.pendingSearch=this.value"
+            onkeydown="if(event.key==='Enter')doSearch()">
+          ${state.pendingSearch ? `<button onclick="state.pendingSearch='';doSearch()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0;line-height:1">×</button>` : ""}
+        </div>
+        <button class="btn-search" onclick="doSearch()">🔍</button>
       </div>
       <div class="chips">${chipsHtml}</div>
     </div>
@@ -251,10 +281,12 @@ function render() {
     </div>
 
     <div class="content">
-      ${filtered.length === 0
-        ? `<div class="empty"><div class="empty-icon">🔍</div>Nenhuma figurinha encontrada</div>`
-        : `<div class="result-count">${filtered.length} figurinha${filtered.length!==1?"s":""}</div>
-           <div class="grid">${cardsHtml}</div>`
+      ${state.tab === "ranking"
+        ? renderRankingHtml()
+        : filtered.length === 0
+          ? `<div class="empty"><div class="empty-icon">🔍</div>Nenhuma figurinha encontrada</div>`
+          : `<div class="result-count">${filtered.length} figurinha${filtered.length!==1?"s":""}</div>
+             <div class="grid">${cardsHtml}</div>`
       }
     </div>
 
@@ -264,6 +296,9 @@ function render() {
         {key:"tenho",icon:"✓",label:"Tenho",count:tenho},
         {key:"preciso",icon:"○",label:"Preciso",count:total-tenho},
         {key:"troca",icon:"↔",label:"Troca",count:troca},
+        {key:"ranking",icon:"🏆",label:"Ranking",count:""},
+        {key:"num1",icon:"①",label:"Nº 1",count:""},
+        {key:"num13",icon:"⑬",label:"Nº 13",count:""},
       ].map(t=>`<button class="nav-btn${state.tab===t.key?" active":""}" onclick="setTab('${t.key}')">
         <span class="nav-icon">${t.icon}</span>
         <span class="nav-label">${t.label}</span>
@@ -335,10 +370,48 @@ function setTab(tab) {
   }
   render();
 }
-function setSearch(v) { state.search = v; render(); }
+function setSearch(v) { state.search = v; state.pendingSearch = v; render(); }
+function doSearch() { state.search = state.pendingSearch; render(); }
 function setGroup(g) { state.group = g; render(); }
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  render();
+}
+function renderRankingHtml() {
+  const countries = {};
+  for (const s of ALBUM_DATA) {
+    if (!countries[s.sc]) countries[s.sc] = {sc:s.sc,name:COUNTRY_NAME[s.sc]||s.sc,flag:FLAG_MAP[s.sc]||'⚽',total:0,tenho:0,group:s.group};
+    countries[s.sc].total++;
+    if (state.album[s.id]?.tenho) countries[s.sc].tenho++;
+  }
+  const sorted = Object.values(countries).sort((a,b)=>(b.tenho/b.total)-(a.tenho/a.total));
+  const complete = sorted.filter(c=>c.tenho===c.total&&c.total>0).length;
+  let out = '<div style="font-size:11px;color:var(--text3);margin-bottom:10px;text-align:center">' + complete + ' seleção(ões) completa(s) · ' + sorted.length + ' seleções</div>';
+  out += sorted.map((c,i)=>{
+    const pct = c.total>0?Math.round(c.tenho/c.total*100):0;
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'<span style="font-size:11px;color:var(--text3)">'+(i+1)+'º</span>';
+    return '<div class="ranking-item">' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        '<div class="rank-badge">' + medal + '</div>' +
+        '<div style="font-size:16px">' + c.flag + '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:12px;font-weight:700;color:var(--text)">' + c.name + '</div>' +
+          '<div style="font-size:9px;color:var(--text3)">' + c.group + '</div>' +
+        '</div>' +
+        '<div style="text-align:right;flex-shrink:0">' +
+          '<div style="font-size:13px;font-weight:700;color:' + (pct===100?'var(--green)':'var(--text)') + '">' + pct + '%</div>' +
+          '<div style="font-size:9px;color:var(--text3)">' + c.tenho + '/' + c.total + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ranking-bar"><div class="ranking-fill' + (pct===100?' complete':'') + '" style="width:' + pct + '%"></div></div>' +
+    '</div>';
+  }).join('');
+  return out;
+}
 
 // ── Boot ───────────────────────────────────────────────────────────────────
+if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light');
 loadState().then(album => {
   state.album = album;
   render();

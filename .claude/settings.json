@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node \"c:/Users/gabri/Downloads/files/transform.js\")",
+      "Bash(node -e ' *)",
+      "Bash(node \"c:/Users/gabri/Downloads/files/fix.js\")",
+      "Bash(del \"c:\\\\Users\\\\gabri\\\\Downloads\\\\files\\\\transform.js\")",
+      "Bash(del \"c:\\\\Users\\\\gabri\\\\Downloads\\\\files\\\\fix.js\")"
+    ]
+  }
+}
