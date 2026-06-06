@@ -207,7 +207,7 @@ function renderCompletedBar() {
     if (state.album[s.id]?.tenho) counts[s.sc].tenho++;
   }
   const done = Object.values(counts).filter(t => t.total > 0 && t.tenho === t.total);
-  return done.map(t => `<div class="completed-chip"><span style="font-size:16px">${t.flag}</span><span>${t.name} ✓</span></div>`).join("");
+  return done.map(t => '<div class="completed-chip">' + '<div style="font-size:18px;line-height:1">' + t.flag + '</div>' + '<span>' + t.name + ' ✓</span>' + '</div>').join("");
 }
 
 function getTenho() { return Object.values(state.album).filter(v=>v.tenho).length; }
