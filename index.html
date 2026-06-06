@@ -58,6 +58,12 @@ button{font-family:inherit}
 .search-bar input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1;min-width:0}
 .btn-search{background:var(--gold);color:#000;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
 .chips{display:flex;gap:5px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.num-filter-bar{display:flex;gap:6px;padding:8px 14px;border-bottom:1px solid var(--border2);background:var(--bg)}
+.num-filter-chip{flex-shrink:0;background:var(--bg3);color:var(--text3);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;cursor:pointer}
+.num-filter-chip.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.trade-sc-bar{display:flex;gap:5px;overflow-x:auto;padding:6px 14px;scrollbar-width:none;border-bottom:1px solid var(--border2);background:var(--bg)}
+.trade-sc-chip{flex-shrink:0;background:var(--bg3);color:var(--text3);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:4px}
+.trade-sc-chip.active{background:var(--gold);color:#000;border-color:var(--gold)}
 .completed-bar{display:flex;gap:5px;overflow-x:auto;padding:6px 14px;scrollbar-width:none;border-bottom:1px solid var(--border2);background:var(--bg)}
 .completed-chip{flex-shrink:0;display:flex;align-items:center;gap:4px;background:#0a2e0a;border:1px solid #4CAF50;border-radius:20px;padding:3px 8px;font-size:10px;color:#4CAF50;white-space:nowrap;font-weight:600}
 .chip{flex-shrink:0;background:var(--bg3);color:var(--text3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:10px;cursor:pointer;white-space:nowrap;transition:background .2s}
@@ -172,6 +178,8 @@ let state = {
   group: "Todos",
   tradeMode: false,
   selectedTrade: new Set(),
+  tradeScFilter: "Todos",
+  numFilter: "preciso",
 };
 
 function getFiltered() {
@@ -185,8 +193,11 @@ function getFiltered() {
       list = list.filter(s => state.album[s.id]?.troca);
     }
   }
+  if (state.tab === "troca" && state.tradeScFilter !== "Todos") list = list.filter(s => s.sc === state.tradeScFilter);
   if (state.tab === "num1") list = list.filter(s => s.num === 1);
   if (state.tab === "num13") list = list.filter(s => s.num === 13);
+  if ((state.tab === "num1" || state.tab === "num13") && state.numFilter === "tenho") list = list.filter(s => state.album[s.id]?.tenho);
+  if ((state.tab === "num1" || state.tab === "num13") && state.numFilter === "preciso") list = list.filter(s => !state.album[s.id]?.tenho);
   if (state.tab === "ranking") return [];
   if (state.group !== "Todos") list = list.filter(s => s.group === state.group);
   const q = state.search.trim().toLowerCase();
@@ -208,6 +219,23 @@ function renderCompletedBar() {
   }
   const done = Object.values(counts).filter(t => t.total > 0 && t.tenho === t.total);
   return done.map(t => '<div class="completed-chip">' + '<div style="font-size:18px;line-height:1">' + t.flag + '</div>' + '<span>' + t.name + ' ✓</span>' + '</div>').join("");
+}
+
+function renderTradeScBar() {
+  // Collect all sc codes present in current trade list
+  let list = ALBUM_DATA;
+  if (state.tradeMode) {
+    list = list.filter(s => !state.album[s.id]?.tenho);
+  } else {
+    list = list.filter(s => state.album[s.id]?.troca);
+  }
+  const scs = ["Todos", ...new Set(list.map(s => s.sc))];
+  return scs.map(sc => {
+    const flag = sc === "Todos" ? "⚽" : (FLAG_MAP[sc] || "");
+    const label = sc === "Todos" ? "Todos" : sc;
+    const active = state.tradeScFilter === sc ? " active" : "";
+    return '<button class="trade-sc-chip' + active + '" onclick="setTradeSc(\'' + sc + '\')"> ' + flag + ' ' + label + '</button>';
+  }).join("");
 }
 
 function getTenho() { return Object.values(state.album).filter(v=>v.tenho).length; }
@@ -290,6 +318,8 @@ function render() {
     </div>
     ${(()=>{const b=renderCompletedBar();return b?`<div class="completed-bar">${b}</div>`:"";})()}
 
+    ${state.tab === "troca" ? '<div class="trade-sc-bar">' + renderTradeScBar() + '</div>' : ""}
+    ${(state.tab === "num1" || state.tab === "num13") ? '<div class="num-filter-bar">' + [["todos","Todos"],["tenho","✓ Tenho"],["preciso","○ Preciso"]].map(([k,l]) => '<button class="num-filter-chip' + (state.numFilter===k?" active":"") + '" onclick="setNumFilter(\''+ k +'\')">' + l + '</button>').join("") + '</div>' : ""}
     <div class="stats">
       ${state.tab === "troca" && state.tradeMode ? `
         <div style="background:#1a3a2e;border:1px solid #2d7a2d;border-radius:8px;padding:10px;margin-bottom:10px">
@@ -401,11 +431,15 @@ function setTab(tab) {
   } else {
     state.tradeMode = false;
     state.selectedTrade.clear();
+    state.tradeScFilter = "Todos";
   }
+  if (tab === "num1" || tab === "num13") state.numFilter = "preciso";
   render();
 }
 function setSearch(v) { state.search = v; state.pendingSearch = v; render(); }
 function doSearch() { state.search = state.pendingSearch; render(); }
+function setNumFilter(f) { state.numFilter = f; render(); }
+function setTradeSc(sc) { state.tradeScFilter = sc; render(); }
 function setGroup(g) { state.group = g; render(); }
 function toggleTheme() {
   const isLight = document.documentElement.classList.toggle('light');
