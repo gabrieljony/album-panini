@@ -180,6 +180,7 @@ let state = {
   selectedTrade: new Set(),
   tradeScFilter: "Todos",
   numFilter: "preciso",
+  sortAlpha: false,
 };
 
 function getFiltered() {
@@ -207,6 +208,7 @@ function getFiltered() {
     s.section.toLowerCase().includes(q) ||
     s.sc.toLowerCase().includes(q)
   );
+  if (state.sortAlpha) list = [...list].sort((a, b) => a.code.localeCompare(b.code));
   return list;
 }
 
@@ -349,7 +351,10 @@ function render() {
         ? renderRankingHtml()
         : filtered.length === 0
           ? `<div class="empty"><div class="empty-icon">🔍</div>Nenhuma figurinha encontrada</div>`
-          : `<div class="result-count">${filtered.length} figurinha${filtered.length!==1?"s":""}</div>
+          : `<div class="result-count" style="display:flex;align-items:center;justify-content:space-between">
+               <span>${filtered.length} figurinha${filtered.length!==1?"s":""}</span>
+               <button onclick="toggleSortAlpha()" style="background:${state.sortAlpha?"var(--gold)":"var(--bg3)"};color:${state.sortAlpha?"#000":"var(--text3)"};border:1px solid ${state.sortAlpha?"var(--gold)":"var(--border)"};border-radius:20px;padding:3px 10px;font-size:10px;font-weight:${state.sortAlpha?700:400};cursor:pointer">A-Z ${state.sortAlpha?"▲":"↕"}</button>
+             </div>
              <div class="grid">${cardsHtml}</div>`
       }
     </div>
@@ -441,6 +446,7 @@ function doSearch() { state.search = state.pendingSearch; render(); }
 function setNumFilter(f) { state.numFilter = f; render(); }
 function setTradeSc(sc) { state.tradeScFilter = sc; render(); }
 function setGroup(g) { state.group = g; render(); }
+function toggleSortAlpha() { state.sortAlpha = !state.sortAlpha; render(); }
 function toggleTheme() {
   const isLight = document.documentElement.classList.toggle('light');
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
