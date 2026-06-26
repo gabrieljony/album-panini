@@ -181,6 +181,7 @@ let state = {
   tradeScFilter: "Todos",
   numFilter: "preciso",
   sortAlpha: false,
+  difficeis: new Set(JSON.parse(localStorage.getItem("difficeis") || "[]")),
 };
 
 function getFiltered() {
@@ -347,7 +348,9 @@ function render() {
     </div>
 
     <div class="content">
-      ${state.tab === "ranking"
+      ${state.tab === "dificeis"
+        ? renderDificeisTab()
+        : state.tab === "ranking"
         ? renderRankingHtml()
         : filtered.length === 0
           ? `<div class="empty"><div class="empty-icon">🔍</div>Nenhuma figurinha encontrada</div>`
@@ -368,6 +371,7 @@ function render() {
         {key:"ranking",icon:"🏆",label:"Ranking",count:""},
         {key:"num1",icon:"①",label:"Nº 1",count:""},
         {key:"num13",icon:"⑬",label:"Nº 13",count:""},
+        {key:"dificeis",icon:"🔥",label:"Difíceis",count:state.difficeis.size||""},
       ].map(t=>`<button class="nav-btn${state.tab===t.key?" active":""}" data-key="${t.key}" onclick="setTab('${t.key}')">
         <span class="nav-icon">${t.icon}</span>
         <span class="nav-label">${t.label}</span>
@@ -429,7 +433,7 @@ function startTradeMode() {
   state.selectedTrade.clear();
   render();
 }
-function setTab(tab) { 
+function setTab(tab) {
   state.tab = tab;
   if (tab === "troca") {
     startTradeMode();
@@ -439,6 +443,7 @@ function setTab(tab) {
     state.tradeScFilter = "Todos";
   }
   if (tab === "num1" || tab === "num13") state.numFilter = "preciso";
+  if (tab === "dificeis") state.sortAlpha = false;
   render();
 }
 function setSearch(v) { state.search = v; state.pendingSearch = v; render(); }
@@ -447,6 +452,60 @@ function setNumFilter(f) { state.numFilter = f; render(); }
 function setTradeSc(sc) { state.tradeScFilter = sc; render(); }
 function setGroup(g) { state.group = g; render(); }
 function toggleSortAlpha() { state.sortAlpha = !state.sortAlpha; render(); }
+function toggleDificil(sc) {
+  if (state.difficeis.has(sc)) state.difficeis.delete(sc);
+  else state.difficeis.add(sc);
+  localStorage.setItem("difficeis", JSON.stringify([...state.difficeis]));
+  render();
+}
+function renderDificeisTab() {
+  const allScs = [...new Set(ALBUM_DATA.map(s => s.sc))]
+    .filter(sc => sc !== "FWC" && sc !== "PANINI")
+    .sort((a, b) => (COUNTRY_NAME[a] || a).localeCompare(COUNTRY_NAME[b] || b));
+
+  const selected = allScs.filter(sc => state.difficeis.has(sc));
+  const others   = allScs.filter(sc => !state.difficeis.has(sc));
+
+  function countryCard(sc, isDif) {
+    const flag = FLAG_MAP[sc] || "⚽";
+    const name = COUNTRY_NAME[sc] || sc;
+    return `<div onclick="toggleDificil('${sc}')" style="
+      background:${isDif?"#2e1a00":"var(--bg3)"};
+      border:2px solid ${isDif?"var(--gold)":"var(--border)"};
+      border-radius:10px;padding:6px 4px;cursor:pointer;
+      display:flex;flex-direction:column;align-items:center;gap:4px;
+      transition:border-color .15s">
+      <div style="width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;background:linear-gradient(135deg,#1a3a52,#0d1f2d);border-radius:6px;padding:4px">
+        <div style="font-size:24px;line-height:1">${flag}</div>
+        <div style="font-size:8px;color:#88ccff;font-weight:700;letter-spacing:0.3px">${sc}</div>
+      </div>
+      <div style="font-size:9px;font-weight:700;color:${isDif?"var(--gold)":"var(--text3)"};text-align:center;line-height:1.2;word-break:break-word;padding:0 2px">${name}</div>
+    </div>`;
+  }
+
+  return `
+    <div style="padding:10px 10px 80px">
+      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">
+        🔥 Difíceis (${selected.length})
+      </div>
+      ${selected.length === 0
+        ? `<div style="background:var(--bg3);border:1px dashed var(--border);border-radius:10px;padding:16px;text-align:center;color:var(--text4);font-size:12px;margin-bottom:12px">
+             Toque em uma seleção abaixo para marcá-la como difícil
+           </div>`
+        : `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
+             ${selected.map(sc => countryCard(sc, true)).join("")}
+           </div>`
+      }
+      <div style="border-top:1px solid var(--border2);margin:8px 0 10px"></div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">
+        Todas as seleções (${others.length})
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+        ${others.map(sc => countryCard(sc, false)).join("")}
+      </div>
+    </div>
+  `;
+}
 function toggleTheme() {
   const isLight = document.documentElement.classList.toggle('light');
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
