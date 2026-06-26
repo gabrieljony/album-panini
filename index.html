@@ -61,7 +61,7 @@ button{font-family:inherit}
 .num-filter-bar{display:flex;gap:6px;padding:8px 14px;border-bottom:1px solid var(--border2);background:var(--bg)}
 .num-filter-chip{flex-shrink:0;background:var(--bg3);color:var(--text3);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;cursor:pointer}
 .num-filter-chip.active{background:var(--gold);color:#000;border-color:var(--gold)}
-.trade-sc-bar{display:flex;gap:5px;overflow-x:auto;padding:6px 14px;scrollbar-width:none;border-bottom:1px solid var(--border2);background:var(--bg)}
+.trade-sc-bar{display:flex;flex-wrap:wrap;gap:5px;padding:6px 14px;border-bottom:1px solid var(--border2);background:var(--bg)}
 .trade-sc-chip{flex-shrink:0;background:var(--bg3);color:var(--text3);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:4px}
 .trade-sc-chip.active{background:var(--gold);color:#000;border-color:var(--gold)}
 .completed-bar{display:flex;gap:5px;overflow-x:auto;padding:6px 14px;scrollbar-width:none;border-bottom:1px solid var(--border2);background:var(--bg)}
@@ -231,7 +231,7 @@ function renderTradeScBar() {
   } else {
     list = list.filter(s => state.album[s.id]?.troca);
   }
-  const scs = ["Todos", ...new Set(list.map(s => s.sc))];
+  const scs = ["Todos", ...[...new Set(list.map(s => s.sc))].sort((a, b) => a.localeCompare(b))];
   return scs.map(sc => {
     const flag = sc === "Todos" ? "⚽" : (FLAG_MAP[sc] || "");
     const label = sc === "Todos" ? "Todos" : sc;
