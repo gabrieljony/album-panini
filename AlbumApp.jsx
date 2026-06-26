@@ -194,6 +194,7 @@ export default function App() {
   const [tab, setTab] = useState("todos");
   const [search, setSearch] = useState("");
   const [filterGroup, setFilterGroup] = useState("Todos");
+  const [sortAlpha, setSortAlpha] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -236,8 +237,9 @@ export default function App() {
         s.sc.toLowerCase().includes(q)
       );
     }
+    if (sortAlpha) list = [...list].sort((a, b) => a.code.localeCompare(b.code));
     return list;
-  }, [tab, albumState, search, filterGroup]);
+  }, [tab, albumState, search, filterGroup, sortAlpha]);
 
   if (!loaded) return (
     <div style={{
@@ -366,8 +368,28 @@ export default function App() {
           </div>
         ) : (
           <>
-            <div style={{ fontSize: 11, color: "#555", marginBottom: 8 }}>
-              {filtered.length} figurinha{filtered.length !== 1 ? "s" : ""}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+              <span style={{ fontSize: 11, color: "#555" }}>
+                {filtered.length} figurinha{filtered.length !== 1 ? "s" : ""}
+              </span>
+              <button
+                onClick={() => setSortAlpha(v => !v)}
+                style={{
+                  background: sortAlpha ? "#ffd700" : "#1a1a2e",
+                  color: sortAlpha ? "#000" : "#888",
+                  border: "1px solid " + (sortAlpha ? "#ffd700" : "#2a2a3e"),
+                  borderRadius: 20,
+                  padding: "3px 10px",
+                  fontSize: 10,
+                  fontWeight: sortAlpha ? 700 : 400,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                }}
+              >
+                A-Z {sortAlpha ? "▲" : "↕"}
+              </button>
             </div>
             <div style={{
               display: "grid",
