@@ -222,6 +222,34 @@ export default function App() {
     });
   }, []);
 
+  const downloadPreciso = useCallback(() => {
+    const needed = ALBUM_DATA.filter(s => !albumState[s.id]?.tenho);
+    const grouped = {};
+    for (const s of needed) {
+      if (!grouped[s.group]) grouped[s.group] = {};
+      if (!grouped[s.group][s.section]) grouped[s.group][s.section] = { sc: s.sc, nums: [] };
+      grouped[s.group][s.section].nums.push(s.num);
+    }
+    const lines = [];
+    for (const [group, sections] of Object.entries(grouped)) {
+      lines.push(group);
+      for (const [section, data] of Object.entries(sections)) {
+        const nums = [...data.nums].sort((a, b) => a - b).join(", ");
+        lines.push(`${section} ${data.sc} ${nums}`);
+      }
+      lines.push("");
+    }
+    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "figurinhas-preciso.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [albumState]);
+
   const filtered = useMemo(() => {
     let list = ALBUM_DATA;
     if (tab === "tenho") list = list.filter(s => albumState[s.id]?.tenho);
@@ -372,24 +400,46 @@ export default function App() {
               <span style={{ fontSize: 11, color: "#555" }}>
                 {filtered.length} figurinha{filtered.length !== 1 ? "s" : ""}
               </span>
-              <button
-                onClick={() => setSortAlpha(v => !v)}
-                style={{
-                  background: sortAlpha ? "#ffd700" : "#1a1a2e",
-                  color: sortAlpha ? "#000" : "#888",
-                  border: "1px solid " + (sortAlpha ? "#ffd700" : "#2a2a3e"),
-                  borderRadius: 20,
-                  padding: "3px 10px",
-                  fontSize: 10,
-                  fontWeight: sortAlpha ? 700 : 400,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 4,
-                }}
-              >
-                A-Z {sortAlpha ? "▲" : "↕"}
-              </button>
+              <div style={{ display: "flex", gap: 6 }}>
+                {tab === "preciso" && (
+                  <button
+                    onClick={downloadPreciso}
+                    style={{
+                      background: "#1a2a1a",
+                      color: "#4CAF50",
+                      border: "1px solid #2d7a2d",
+                      borderRadius: 20,
+                      padding: "3px 10px",
+                      fontSize: 10,
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 4,
+                    }}
+                  >
+                    ⬇ Baixar lista
+                  </button>
+                )}
+                <button
+                  onClick={() => setSortAlpha(v => !v)}
+                  style={{
+                    background: sortAlpha ? "#ffd700" : "#1a1a2e",
+                    color: sortAlpha ? "#000" : "#888",
+                    border: "1px solid " + (sortAlpha ? "#ffd700" : "#2a2a3e"),
+                    borderRadius: 20,
+                    padding: "3px 10px",
+                    fontSize: 10,
+                    fontWeight: sortAlpha ? 700 : 400,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                  }}
+                >
+                  A-Z {sortAlpha ? "▲" : "↕"}
+                </button>
+              </div>
             </div>
             <div style={{
               display: "grid",

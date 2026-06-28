@@ -356,7 +356,10 @@ function render() {
           ? `<div class="empty"><div class="empty-icon">🔍</div>Nenhuma figurinha encontrada</div>`
           : `<div class="result-count" style="display:flex;align-items:center;justify-content:space-between">
                <span>${filtered.length} figurinha${filtered.length!==1?"s":""}</span>
-               <button onclick="toggleSortAlpha()" style="background:${state.sortAlpha?"var(--gold)":"var(--bg3)"};color:${state.sortAlpha?"#000":"var(--text3)"};border:1px solid ${state.sortAlpha?"var(--gold)":"var(--border)"};border-radius:20px;padding:3px 10px;font-size:10px;font-weight:${state.sortAlpha?700:400};cursor:pointer">A-Z ${state.sortAlpha?"▲":"↕"}</button>
+               <div style="display:flex;gap:6px">
+                 ${state.tab==="preciso"?`<button onclick="downloadPreciso()" style="background:#1a2a1a;color:#4CAF50;border:1px solid #2d7a2d;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:600;cursor:pointer">⬇ Baixar lista</button>`:""}
+                 <button onclick="toggleSortAlpha()" style="background:${state.sortAlpha?"var(--gold)":"var(--bg3)"};color:${state.sortAlpha?"#000":"var(--text3)"};border:1px solid ${state.sortAlpha?"var(--gold)":"var(--border)"};border-radius:20px;padding:3px 10px;font-size:10px;font-weight:${state.sortAlpha?700:400};cursor:pointer">A-Z ${state.sortAlpha?"▲":"↕"}</button>
+               </div>
              </div>
              <div class="grid">${cardsHtml}</div>`
       }
@@ -452,6 +455,33 @@ function setNumFilter(f) { state.numFilter = f; render(); }
 function setTradeSc(sc) { state.tradeScFilter = sc; render(); }
 function setGroup(g) { state.group = g; render(); }
 function toggleSortAlpha() { state.sortAlpha = !state.sortAlpha; render(); }
+function downloadPreciso() {
+  const needed = ALBUM_DATA.filter(s => !state.album[s.id]?.tenho);
+  const grouped = {};
+  for (const s of needed) {
+    if (!grouped[s.group]) grouped[s.group] = {};
+    if (!grouped[s.group][s.section]) grouped[s.group][s.section] = { sc: s.sc, nums: [] };
+    grouped[s.group][s.section].nums.push(s.num);
+  }
+  const lines = [];
+  for (const [group, sections] of Object.entries(grouped)) {
+    lines.push(group);
+    for (const [section, data] of Object.entries(sections)) {
+      const nums = [...data.nums].sort((a, b) => a - b).join(", ");
+      lines.push(`${section} ${data.sc} ${nums}`);
+    }
+    lines.push("");
+  }
+  const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "figurinhas-preciso.txt";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 function toggleDificil(sc) {
   if (state.difficeis.has(sc)) state.difficeis.delete(sc);
   else state.difficeis.add(sc);
